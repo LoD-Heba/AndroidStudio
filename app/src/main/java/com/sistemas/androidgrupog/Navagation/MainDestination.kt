@@ -1,6 +1,7 @@
 package com.sistemas.androidgrupog.Navagation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -13,7 +14,7 @@ object MainDestination {
 }
 
 @Composable
-fun AppNavigation(){
+fun AppNavigation(navController: NavController){
     val navController = rememberNavController()
 
     NavHost(navController, startDestination = MainDestination.LOGIN) {

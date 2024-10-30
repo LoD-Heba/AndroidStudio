@@ -12,6 +12,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.sistemas.androidgrupog.Navagation.AppNavigation
 import com.sistemas.androidgrupog.ui.theme.AndroidGrupoGTheme
 
 class MainActivity : ComponentActivity() {
@@ -21,7 +24,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             AndroidGrupoGTheme (darkTheme = false){
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    val navController = rememberNavController()
                     Greeting(
+                        navController,
                         name = "Android",
                         modifier = Modifier.padding(innerPadding)
                     )
@@ -32,14 +37,8 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-    FilledButtonExample(
-        onClick = {}
-    )
+fun Greeting(navController: NavController,name: String, modifier: Modifier = Modifier) {
+    AppNavigation(navController)
 }
 @Composable
 fun FilledButtonExample(onClick: () -> Unit) {
@@ -48,10 +47,10 @@ fun FilledButtonExample(onClick: () -> Unit) {
     }
 }
 
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     AndroidGrupoGTheme {
         Greeting("Android")
     }
-}
+}*/
