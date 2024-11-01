@@ -20,7 +20,7 @@ fun AppNavigation(navController: NavHostController,activity:ComponentActivity){
 
     NavHost(navController, startDestination = MainDestination.LOGIN) {
         composable(MainDestination.LOGIN){
-            Login()
+            Login(navController)
         }
         composable(MainDestination.MAIN){
             Main()
