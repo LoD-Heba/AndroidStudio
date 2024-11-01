@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.OutlinedTextField
@@ -44,8 +45,8 @@ fun Login(navController:NavHostController) {
             Column {
                 Row {
                     OutlinedTextField(
-                        value = "",
-                        onValueChange = { },
+                        value = emailText,
+                        onValueChange = { emailText = it },
                         label = { Text("Email")},
                         placeholder = { Text("Ingrese su correo")}
                     )
@@ -57,6 +58,13 @@ fun Login(navController:NavHostController) {
                         label = { Text("Password")},
                         placeholder = { Text("Ingrese su Constraseña")}
                     )
+                }
+                Row {
+                    Button(
+                        onClick = { navController.navigate("main") }
+                    ) {
+                        Text("Ingresar")
+                    }
                 }
             }
         }
