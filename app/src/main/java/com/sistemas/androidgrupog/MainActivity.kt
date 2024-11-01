@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.sistemas.androidgrupog.Navagation.AppNavigation
 import com.sistemas.androidgrupog.ui.theme.AndroidGrupoGTheme
@@ -26,9 +27,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     val navController = rememberNavController()
                     Greeting(
-                        navController,
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
+                        navController,this
                     )
                 }
             }
@@ -37,8 +36,8 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(navController: NavController,name: String, modifier: Modifier = Modifier) {
-    AppNavigation(navController)
+fun Greeting(navController: NavHostController, activity: ComponentActivity) {
+    AppNavigation(navController,activity)
 }
 @Composable
 fun FilledButtonExample(onClick: () -> Unit) {
