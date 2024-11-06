@@ -25,24 +25,28 @@ import androidx.navigation.NavHostController
 @Composable
 fun Login(navController:NavHostController) {
     var emailText by remember { mutableStateOf("")}
-    Column (
-        modifier = Modifier.padding(
-            start = 35.dp,
-            end = 35.dp,
-            top = 120.dp,
-            bottom = 120.dp
-        ).fillMaxSize()
-    ){
+
         ElevatedCard(
             colors = CardDefaults.cardColors(
-                containerColor = Color.Cyan
+                containerColor = Color(0xFF34495E)
             ),
             elevation = CardDefaults.cardElevation(
                 defaultElevation = 8.dp
             ),
-            modifier = Modifier.size(width = 270.dp, height = 350.dp)
+            modifier = Modifier.size(width = 380.dp, height = 310.dp)
+                .fillMaxSize()
+                .padding(
+                    start = 40.dp,
+                    end = 40.dp,
+                    top= 30.dp,
+                    bottom = 20.dp
+                )
         ) {
-            Column {
+            Column(
+                modifier = Modifier.padding(
+                    25.dp
+                )
+            ) {
                 Row {
                     OutlinedTextField(
                         value = emailText,
@@ -68,5 +72,5 @@ fun Login(navController:NavHostController) {
                 }
             }
         }
-    }
+
 }
