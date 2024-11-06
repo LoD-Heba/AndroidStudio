@@ -1,5 +1,6 @@
 package com.sistemas.androidgrupog.Views
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,9 +19,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.sistemas.androidgrupog.R
 
 @Composable
 fun Login(navController:NavHostController) {
@@ -47,6 +50,13 @@ fun Login(navController:NavHostController) {
                     25.dp
                 )
             ) {
+                Row {
+                    Image(
+                        modifier = Modifier.size(80.dp,80.dp),
+                        painter = painterResource(R.drawable.paraandroid),
+                        contentDescription = "Probando imagen"
+                    )
+                }
                 Row {
                     OutlinedTextField(
                         value = emailText,
