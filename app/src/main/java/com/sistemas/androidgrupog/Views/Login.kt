@@ -16,19 +16,33 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.sistemas.androidgrupog.R
+import com.sistemas.androidgrupog.ViewModels.Login
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 fun Login(navController:NavHostController) {
     var emailText by remember { mutableStateOf("")}
+    var passwordText by remember { mutableStateOf("")}
 
+    val viewModel = viewModel<Login>()
+    var emailErrorMessage by remember { viewModel.emailErrorMessage }
+    var passwordErrorMessage by remember { viewModel.passwordErrorMessage }
+    var emailErrorState by remember { viewModel.emailErrorState }
+    var passwordErrorState by remember { viewModel.passwordErrorState }
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
         ElevatedCard(
             colors = CardDefaults.cardColors(
                 containerColor = Color(0xFF34495E)
@@ -36,7 +50,7 @@ fun Login(navController:NavHostController) {
             elevation = CardDefaults.cardElevation(
                 defaultElevation = 8.dp
             ),
-            modifier = Modifier.size(width = 380.dp, height = 310.dp)
+            modifier = Modifier.size(width = 380.dp, height = 390.dp)
                 .fillMaxSize()
                 .padding(
                     start = 40.dp,
@@ -62,21 +76,35 @@ fun Login(navController:NavHostController) {
                         value = emailText,
                         onValueChange = { emailText = it },
                         label = { Text("Email")},
-                        placeholder = { Text("Ingrese su correo")}
+                        placeholder = { Text("Ingrese su correo")},
+                        isError = emailErrorState
                     )
+                }
+                if(emailErrorState)
+                {
+                    Row {
+                        Text(
+                            text=emailErrorMessage
+                        )
+                    }
                 }
                 Row {
                     OutlinedTextField(
-                        value = "",
-                        onValueChange = { },
+                        value = passwordText,
+                        onValueChange = { passwordText = it },
                         label = { Text("Password")},
                         placeholder = { Text("Ingrese su Constraseña")}
                     )
                 }
                 Row {
-                    Button(
-                        onClick = { navController.navigate("main") }
-                    ) {
+                    Button(onClick = {
+                        viewModel.runLogin(coroutineScope){
+                            val response = viewModel.runHttpLogin(emailText,passwordText)
+                            withContext(Dispatchers.Main){
+                                viewModel.procesarRespuesta(response, context, navController)
+                            }
+                        }
+                    }) {
                         Text("Ingresar")
                     }
                 }
