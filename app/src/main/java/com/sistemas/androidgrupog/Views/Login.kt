@@ -30,7 +30,18 @@ import com.sistemas.androidgrupog.R
 import com.sistemas.androidgrupog.ViewModels.Login
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Login(navController:NavHostController) {
     var emailText by remember { mutableStateOf("")}
@@ -110,5 +121,96 @@ fun Login(navController:NavHostController) {
                 }
             }
         }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        // Imagen de fondo
+        Image(
+            painter = painterResource(id = R.drawable.epico),
+            contentDescription = "Fondo de tarjeta",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(12.dp))
+        )
+
+        // Tarjeta encima de la imagen
+        ElevatedCard(
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 8.dp
+            ),
+            modifier = Modifier
+                .size(width = 380.dp, height = 460.dp)
+                .padding(16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = Color(0x2a27ea).copy(alpha = 0.1f)
+            )
+        ) {
+            Column(
+                modifier = Modifier.padding(25.dp),
+
+                ) {
+
+                Row {
+                    OutlinedTextField(
+                        value = emailText,
+                        onValueChange = { emailText = it },
+                        label = { Text("Email") },
+                        placeholder = { Text("Ingrese su correo",
+                            //color = Color.White,
+                            //fontWeight = FontWeight.Bold
+                            )},
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            disabledPlaceholderColor = Color.Blue,
+                        )
+                    )
+                }
+                Row {
+                    OutlinedTextField(
+                        value = "",
+                        onValueChange = { },
+                        label = { Text("Password") },
+                        placeholder = { Text("Ingrese su Contraseña") },
+
+                        )
+                }
+
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Row (
+                        verticalAlignment = Alignment.CenterVertically
+                    ){
+                        Button(
+                            onClick = { navController.navigate("main") },
+                            modifier = Modifier.size(width = 130.dp, height = 40.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF6200EE),
+                                contentColor = Color.White
+                            )
+                        )
+                        {
+                            Text("Ingresar")
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Button(
+                            onClick = { navController.navigate("main") },
+                            modifier = Modifier.size(width = 130.dp, height = 40.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF6200EE),
+                                contentColor = Color.White
+                            )
+                        ) {
+                            Text("Registrarse")
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 }
