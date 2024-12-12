@@ -39,7 +39,7 @@ class Login : ViewModel() {
         if(response.code == 200)
         {
             val body = response.body
-            navController.navigate("main")
+            navController.navigate("product_register")
         }
         if(response.code == 422)
         {
