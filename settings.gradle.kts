@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "AndroidGrupoG"
 include(":app")
- 
+include(":notas")
