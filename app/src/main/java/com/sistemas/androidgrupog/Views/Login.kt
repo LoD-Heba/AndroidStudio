@@ -52,25 +52,40 @@ import com.sistemas.androidgrupog.R
 import com.sistemas.androidgrupog.ViewModels.Login
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun Login(navController:NavHostController) {
+    //
     var emailText by remember { mutableStateOf("")}
     var passwordText by remember { mutableStateOf("")}
-
+    //
+    //Esta variable conecta con viewmodels.login
     val viewModel = viewModel<Login>()
+    //variables reactivas
     var emailErrorMessage by remember { viewModel.emailErrorMessage }
     var passwordErrorMessage by remember { viewModel.passwordErrorMessage }
     var emailErrorState by remember { viewModel.emailErrorState }
     var passwordErrorState by remember { viewModel.passwordErrorState }
+    //
     val coroutineScope = rememberCoroutineScope()
+    //
     val context = LocalContext.current
+    //
     var visible by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         kotlinx.coroutines.delay(1000)
         visible=true
     }
-    AnimatedVisibility(
+    /*AnimatedVisibility(
         visible = visible,
         enter = scaleIn(
             animationSpec = tween(
@@ -87,19 +102,32 @@ fun Login(navController:NavHostController) {
                 easing = LinearOutSlowInEasing // Interpolador tipo "ease"
             )
         )*/
-    ) {
+    ) {*/
+
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
-        ){
+        )
+        {
+                Image(
+                    painter = painterResource(id = R.drawable.background),
+                    contentDescription = "Fondo",
+                    contentScale = ContentScale.Crop, // Ajusta la escala según tu preferencia
+                    modifier = Modifier
+                        .fillMaxSize() //tamaño
+                        //.clip(RoundedCornerShape(16.dp)) esquinas redondeadas
+
+                )
             ElevatedCard(
                 colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFF34495E)
+                    containerColor = Color(0xFF34495E).copy(alpha = 0.7f) // 50% de opacidad
                 ),
                 elevation = CardDefaults.cardElevation(
-                    defaultElevation = 90.dp
+                    defaultElevation = 10.dp
                 ),
-                modifier = Modifier.wrapContentSize()
+                modifier = Modifier
+                    .wrapContentSize()
+                    .graphicsLayer(shape = RoundedCornerShape(16.dp))
                     .padding(
                         start = 40.dp,
                         end = 40.dp,
@@ -107,6 +135,7 @@ fun Login(navController:NavHostController) {
                         bottom = 20.dp
                     )
             ) {
+
                 Column(
                     modifier = Modifier.padding(
                         25.dp
@@ -130,7 +159,7 @@ fun Login(navController:NavHostController) {
                     Row {
                         OutlinedTextField(
                             value = emailText,
-                            onValueChange = { emailText = it },
+                            onValueChange = { emailText = it },//emailText actualización
                             label = { Text("Email")},
                             placeholder = { Text("Ingrese su correo")},
                             isError = emailErrorState
@@ -147,12 +176,14 @@ fun Login(navController:NavHostController) {
                     Row {
                         OutlinedTextField(
                             value = passwordText,
-                            onValueChange = { passwordText = it },
+                            onValueChange = { passwordText = it }, //password actualización
                             label = { Text("Password")},
                             placeholder = { Text("Ingrese su Constraseña")}
                         )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
+
+                    ///
                     Row(
                         modifier=Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center,
@@ -169,12 +200,13 @@ fun Login(navController:NavHostController) {
                             Text("Ingresar")
                         }
                     }
+                    /////
                 }
             }
         }
     }
 
-}
+//}
 @Preview(showBackground = true)
 @Composable
 fun LoginPreview() {

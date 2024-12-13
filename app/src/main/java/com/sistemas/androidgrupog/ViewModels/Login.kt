@@ -1,5 +1,5 @@
 package com.sistemas.androidgrupog.ViewModels
-
+//controller
 
 import android.content.Context
 import androidx.compose.runtime.mutableStateOf
@@ -14,12 +14,13 @@ import org.json.JSONObject
 import java.net.ConnectException
 
 class Login : ViewModel() {
+    //mensajes de error
     val emailErrorMessage = mutableStateOf("");
     val passwordErrorMessage = mutableStateOf("");
     val emailErrorState = mutableStateOf(false);
     val passwordErrorState = mutableStateOf(false);
-
-
+    //
+    //metodos: coroutineScope, hilos o procesos en segundo plano--- asincron
     fun runLogin(coroutineScope: CoroutineScope, task: suspend ()->Unit){
         coroutineScope.launch {
             try{
@@ -30,9 +31,13 @@ class Login : ViewModel() {
             catch (e:Exception){}
         }
     }
+    //
+
+    //suspend: metodo que es ejecutado solo si existe un segundo plano
+    //recive parametros: emailText y password
     suspend fun runHttpLogin(emailText:String,password:String): Response {
-        val httpClient = HttpCLient()
-        return httpClient.makeHttpRequest(emailText,password)
+        val httpClient = HttpCLient() //crear instancia
+        return httpClient.makeHttpRequest(emailText,password) //corre el metodo makeHttpRequest
     }
     fun procesarRespuesta(response: Response, context: Context, navController: NavHostController)
     {

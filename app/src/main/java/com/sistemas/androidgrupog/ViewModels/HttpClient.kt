@@ -16,7 +16,7 @@ import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 
 class HttpCLient  {
-
+//conexion con laravel userLogin
     suspend fun makeHttpRequest(emailText:String, password:String): Response
     {
         val client = OkHttpClient.Builder()
@@ -30,8 +30,10 @@ class HttpCLient  {
                 "password": "$password"
             }
         """.trimIndent()
+        //
         val mediaType = "application/json; charset=utf-8".toMediaType()
         val requestBody = json.toRequestBody(mediaType)
+        //
         val request = Request.Builder()
             .url("http://$backendAddress$loginPath")
             .post(requestBody)

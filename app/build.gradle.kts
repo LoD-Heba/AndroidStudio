@@ -48,7 +48,7 @@ android {
         }
     }
 }
-
+//librerias
 dependencies {
 
     implementation(libs.androidx.core.ktx)
@@ -67,8 +67,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation("androidx.navigation:navigation-compose:2.4.0")
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0") //conexion http
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0") //manejo de json
     implementation("io.coil-kt:coil-compose:2.5.0")
 }
