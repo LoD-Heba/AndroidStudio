@@ -21,7 +21,7 @@ class HttpCLient  {
     {
         val client = OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)).build();
-        val backendAddress = "192.168.1.34:8000"
+        val backendAddress = "192.168.1.133:8000"
         val loginPath = "/api/userLogin"
 
         val json = """

@@ -53,11 +53,13 @@ import com.sistemas.androidgrupog.ViewModels.Login
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -118,24 +120,25 @@ fun Login(navController:NavHostController) {
                         //.clip(RoundedCornerShape(16.dp)) esquinas redondeadas
 
                 )
+            ////////
             ElevatedCard(
                 colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFF34495E).copy(alpha = 0.7f) // 50% de opacidad
+                    containerColor = Color.White.copy(alpha = 0.8f) // 50% de opacidad
                 ),
                 elevation = CardDefaults.cardElevation(
                     defaultElevation = 10.dp
+
                 ),
                 modifier = Modifier
                     .wrapContentSize()
-                    .graphicsLayer(shape = RoundedCornerShape(16.dp))
                     .padding(
                         start = 40.dp,
                         end = 40.dp,
-                        top= 30.dp,
+                        top = 30.dp,
                         bottom = 20.dp
                     )
             ) {
-
+    //////
                 Column(
                     modifier = Modifier.padding(
                         25.dp
@@ -148,9 +151,9 @@ fun Login(navController:NavHostController) {
                         verticalAlignment = Alignment.CenterVertically) {
 
                         Image(
-                            modifier = Modifier.size(80.dp, 80.dp)
-                                .clip(RoundedCornerShape(40.dp)),
-                            painter = painterResource(R.drawable.paraandroid),
+                            modifier = Modifier.size(181.dp, 170.dp)
+                                .clip(RoundedCornerShape(10.dp)),
+                            painter = painterResource(R.drawable.logoclub),
                             contentDescription = "Probando imagen",
                             contentScale = ContentScale.Crop
                         )
@@ -160,7 +163,7 @@ fun Login(navController:NavHostController) {
                         OutlinedTextField(
                             value = emailText,
                             onValueChange = { emailText = it },//emailText actualización
-                            label = { Text("Email")},
+                            label = { Text("Correo")},
                             placeholder = { Text("Ingrese su correo")},
                             isError = emailErrorState
                         )
@@ -177,7 +180,7 @@ fun Login(navController:NavHostController) {
                         OutlinedTextField(
                             value = passwordText,
                             onValueChange = { passwordText = it }, //password actualización
-                            label = { Text("Password")},
+                            label = { Text("Contraseña")},
                             placeholder = { Text("Ingrese su Constraseña")}
                         )
                     }
@@ -198,6 +201,16 @@ fun Login(navController:NavHostController) {
                             }
                         }) {
                             Text("Ingresar")
+                        }
+                        Button(onClick = {
+                            viewModel.runLogin(coroutineScope){
+                                val response = viewModel.runHttpLogin(emailText,passwordText)
+                                withContext(Dispatchers.Main){
+                                    viewModel.procesarRespuesta(response, context, navController)
+                                }
+                            }
+                        }) {
+                            Text("Registrarse")
                         }
                     }
                     /////
