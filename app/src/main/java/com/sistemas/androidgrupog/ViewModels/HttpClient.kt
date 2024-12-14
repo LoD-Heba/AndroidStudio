@@ -21,7 +21,7 @@ class HttpCLient  {
     {
         val client = OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)).build();
-        val backendAddress = "192.168.1.133:8000"
+        val backendAddress = "192.168.1.2:8000"
         val loginPath = "/api/userLogin"
 
         val json = """
@@ -50,7 +50,7 @@ class HttpCLient  {
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
             .build()
 
-        val backendAddress = "192.168.1.8:8000"
+        val backendAddress = "192.168.1.2:8000"
         val productPath = "/api/product"
 
         // Crear el cuerpo de la solicitud como multipart/form-data
@@ -106,7 +106,7 @@ class HttpCLient  {
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
             .build()
 
-        val backendAddress = "192.168.1.8:8000"
+        val backendAddress = "192.168.1.2:8000"
         val loginPath = "/api/product"
 
 
@@ -130,7 +130,7 @@ class HttpCLient  {
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
             .build()
 
-        val backendAddress = "192.168.1.8:8000"
+        val backendAddress = "192.168.1.2:8000"
         val loginPath = "/api/category"
 
 

@@ -54,14 +54,21 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.TextButton
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -83,10 +90,13 @@ fun Login(navController:NavHostController) {
     val context = LocalContext.current
     //
     var visible by remember { mutableStateOf(false) }
+
+    //Este codigo es para añadir animacion en cierto lapso de tiempo, en este caso 1 segundo
     LaunchedEffect(Unit) {
         kotlinx.coroutines.delay(1000)
         visible=true
     }
+    //
     /*AnimatedVisibility(
         visible = visible,
         enter = scaleIn(
@@ -107,11 +117,11 @@ fun Login(navController:NavHostController) {
     ) {*/
 
         Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+            modifier = Modifier.fillMaxSize(), //tamaño maximo de la pantalla
+            contentAlignment = Alignment.Center //centrea el contenido
         )
         {
-                Image(
+            Image(
                     painter = painterResource(id = R.drawable.background),
                     contentDescription = "Fondo",
                     contentScale = ContentScale.Crop, // Ajusta la escala según tu preferencia
@@ -119,102 +129,157 @@ fun Login(navController:NavHostController) {
                         .fillMaxSize() //tamaño
                         //.clip(RoundedCornerShape(16.dp)) esquinas redondeadas
 
-                )
-            ////////
+            )
+            ////////El contenido
             ElevatedCard(
                 colors = CardDefaults.cardColors(
-                    containerColor = Color.White.copy(alpha = 0.8f) // 50% de opacidad
+                    containerColor = Color.White.copy(alpha = 0.7f) // 70% de opacidad
                 ),
                 elevation = CardDefaults.cardElevation(
                     defaultElevation = 10.dp
 
                 ),
-                modifier = Modifier
-                    .wrapContentSize()
-                    .padding(
-                        start = 40.dp,
-                        end = 40.dp,
-                        top = 30.dp,
-                        bottom = 20.dp
-                    )
+                modifier = Modifier //comparable a css
+                    .wrapContentSize() //adecua el tamaño
+                    .padding(25.dp,80.dp)
             ) {
     //////
                 Column(
-                    modifier = Modifier.padding(
-                        25.dp
-                    )
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth()
-                            .padding(23.dp),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically) {
+                    // Imagen del Logo
+                    Image(
+                        painter = painterResource(R.drawable.logoclub),
+                        contentDescription = "Logo",
+                        modifier = Modifier
+                            .size(120.dp,114.dp)
+                            .clip(RoundedCornerShape(16.dp)),
+                        contentScale = ContentScale.Crop
+                    )
+                    Spacer(modifier = Modifier.height(32.dp))
 
-                        Image(
-                            modifier = Modifier.size(181.dp, 170.dp)
-                                .clip(RoundedCornerShape(10.dp)),
-                            painter = painterResource(R.drawable.logoclub),
-                            contentDescription = "Probando imagen",
-                            contentScale = ContentScale.Crop
-                        )
+                    // Campo de correo electrónico
+                    OutlinedTextField(
+                    value = emailText,
+                    onValueChange = { emailText = it },
+                    label = { Text("Correo") },
+                    placeholder = { Text("Ingrese su correo") },
+                    isError = emailErrorState,
+                    modifier = Modifier.fillMaxWidth()
+                    )
 
-                    }
-                    Row {
-                        OutlinedTextField(
-                            value = emailText,
-                            onValueChange = { emailText = it },//emailText actualización
-                            label = { Text("Correo")},
-                            placeholder = { Text("Ingrese su correo")},
-                            isError = emailErrorState
-                        )
-                    }
-                    if(emailErrorState)
-                    {
-                        Row {
-                            Text(
-                                text=emailErrorMessage
-                            )
-                        }
-                    }
-                    Row {
-                        OutlinedTextField(
-                            value = passwordText,
-                            onValueChange = { passwordText = it }, //password actualización
-                            label = { Text("Contraseña")},
-                            placeholder = { Text("Ingrese su Constraseña")}
+                    if (emailErrorState) {
+                        Text(
+                            text = emailErrorMessage,
+                            color = Color.Red,
+                            style = MaterialTheme.typography.bodySmall
                         )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    ///
-                    Row(
-                        modifier=Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
+                    // Campo de contraseña
+                    OutlinedTextField(
+                        value = passwordText,
+                        onValueChange = { passwordText = it },
+                        label = { Text("Contraseña") },
+                        placeholder = { Text("Ingrese su contraseña") },
+                        modifier = Modifier.fillMaxWidth(),
+                        visualTransformation = PasswordVisualTransformation()
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Botón de "¿Olvidaste tu contraseña?"
+                    TextButton(
+                        onClick = { /* Lógica para restablecer contraseña */ },
+                        modifier = Modifier.align(Alignment.End)
                     ) {
-                        Button(onClick = {
-                            viewModel.runLogin(coroutineScope){
-                                val response = viewModel.runHttpLogin(emailText,passwordText)
-                                withContext(Dispatchers.Main){
-                                    viewModel.procesarRespuesta(response, context, navController)
-                                }
-                            }
-                        }) {
+                        Text(
+                            text = "¿Olvidaste tu contraseña?",
+                            color = MaterialTheme.colorScheme.primary,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Botones de inicio de sesión y registro
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        Button(onClick = { /* Lógica de inicio de sesión */ }) {
                             Text("Ingresar")
                         }
-                        Button(onClick = {
-                            viewModel.runLogin(coroutineScope){
-                                val response = viewModel.runHttpLogin(emailText,passwordText)
-                                withContext(Dispatchers.Main){
-                                    viewModel.procesarRespuesta(response, context, navController)
-                                }
-                            }
-                        }) {
+                        OutlinedButton(onClick = { /* Lógica de registro */ }) {
                             Text("Registrarse")
                         }
                     }
-                    /////
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    // Línea divisoria
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Divider(
+                            color = Color.Gray,
+                            modifier = Modifier
+                                .weight(1f)
+                                .align(Alignment.CenterVertically)
+                        )
+                        Text(
+                            text = "O inicia sesión con",
+                            modifier = Modifier.padding(horizontal = 8.dp),
+                            color = Color.Gray,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                        Divider(
+                            color = Color.Gray,
+                            modifier = Modifier
+                                .weight(1f)
+                                .align(Alignment.CenterVertically)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Botones de Google y Facebook
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(6.dp),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        // Botón de Google
+                        Image(
+                            painter = painterResource(R.drawable.google), // Reemplaza con el recurso de tu imagen PNG de Google
+                            contentDescription = "Iniciar sesión con Google",
+                            modifier = Modifier
+                                .size(70.dp)
+                                .clickable {
+                                    // Lógica para inicio de sesión con Google
+                                }
+                        )
+
+                        // Botón de Facebook
+                        Image(
+                            painter = painterResource(R.drawable.facebook), // Reemplaza con el recurso de tu imagen PNG de Facebook
+                            contentDescription = "Iniciar sesión con Facebook",
+                            modifier = Modifier
+                                .size(70.dp)
+                                .clickable {
+                                    // Lógica para inicio de sesión con Facebook
+                                }
+                        )
+                    }
+
                 }
+
             }
         }
     }

@@ -71,4 +71,8 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0") //manejo de json
     implementation("io.coil-kt:coil-compose:2.5.0")
+    implementation ("androidx.compose.runtime:runtime:1.5.0")
+
+
+
 }
