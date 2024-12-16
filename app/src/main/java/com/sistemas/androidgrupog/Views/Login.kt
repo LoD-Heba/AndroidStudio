@@ -1,5 +1,6 @@
 package com.sistemas.androidgrupog.Views
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -71,6 +72,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun Login(navController:NavHostController) {
     //
@@ -89,33 +91,13 @@ fun Login(navController:NavHostController) {
     //
     val context = LocalContext.current
     //
-    var visible by remember { mutableStateOf(false) }
+   // var visible by remember { mutableStateOf(false) }
 
     //Este codigo es para añadir animacion en cierto lapso de tiempo, en este caso 1 segundo
-    LaunchedEffect(Unit) {
-        kotlinx.coroutines.delay(1000)
-        visible=true
-    }
-    //
-    /*AnimatedVisibility(
-        visible = visible,
-        enter = scaleIn(
-            animationSpec = tween(
-                durationMillis = 1500, // Duración de 1 segundo (1000 ms)
-                easing = LinearOutSlowInEasing // Interpolador tipo "ease"
-            ),
-            transformOrigin = TransformOrigin.Center
-        ) + expandIn(expandFrom = Alignment.Center)
-        /*fadeIn(
-            // Overwrites the initial value of alpha to 0.4f for fade in, 0 by default
-            initialAlpha = 0f, // Empieza desde completamente transparente
-            animationSpec = tween(
-                durationMillis = 10000, // Duración de 1 segundo (1000 ms)
-                easing = LinearOutSlowInEasing // Interpolador tipo "ease"
-            )
-        )*/
-    ) {*/
-
+   // LaunchedEffect(Unit) {
+ //       kotlinx.coroutines.delay(1000)
+  //      visible=true
+ //   }
         Box(
             modifier = Modifier.fillMaxSize(), //tamaño maximo de la pantalla
             contentAlignment = Alignment.Center //centrea el contenido
@@ -141,7 +123,7 @@ fun Login(navController:NavHostController) {
                 ),
                 modifier = Modifier //comparable a css
                     .wrapContentSize() //adecua el tamaño
-                    .padding(25.dp,80.dp)
+                    .padding(25.dp,180.dp)
             ) {
     //////
                 Column(
@@ -166,7 +148,7 @@ fun Login(navController:NavHostController) {
                     OutlinedTextField(
                     value = emailText,
                     onValueChange = { emailText = it },
-                    label = { Text("Correo") },
+                    label = { Text("Email") },
                     placeholder = { Text("Ingrese su correo") },
                     isError = emailErrorState,
                     modifier = Modifier.fillMaxWidth()
@@ -185,7 +167,7 @@ fun Login(navController:NavHostController) {
                     OutlinedTextField(
                         value = passwordText,
                         onValueChange = { passwordText = it },
-                        label = { Text("Contraseña") },
+                        label = { Text("Password") },
                         placeholder = { Text("Ingrese su contraseña") },
                         modifier = Modifier.fillMaxWidth(),
                         visualTransformation = PasswordVisualTransformation()
@@ -211,7 +193,15 @@ fun Login(navController:NavHostController) {
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        Button(onClick = { /* Lógica de inicio de sesión */ }) {
+                        Button(onClick = {
+                            /* Lógica de inicio de sesión */
+                            viewModel.runLogin(coroutineScope){
+                                val response = viewModel.runHttpLogin(emailText,passwordText)
+                                withContext(Dispatchers.Main){
+                                    viewModel.procesarRespuesta(response, context, navController)
+                                }
+                            }
+                        }) {
                             Text("Ingresar")
                         }
                         OutlinedButton(onClick = { /* Lógica de registro */ }) {
@@ -219,64 +209,6 @@ fun Login(navController:NavHostController) {
                         }
                     }
                     Spacer(modifier = Modifier.height(24.dp))
-
-                    // Línea divisoria
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Divider(
-                            color = Color.Gray,
-                            modifier = Modifier
-                                .weight(1f)
-                                .align(Alignment.CenterVertically)
-                        )
-                        Text(
-                            text = "O inicia sesión con",
-                            modifier = Modifier.padding(horizontal = 8.dp),
-                            color = Color.Gray,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                        Divider(
-                            color = Color.Gray,
-                            modifier = Modifier
-                                .weight(1f)
-                                .align(Alignment.CenterVertically)
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Botones de Google y Facebook
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(6.dp),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        // Botón de Google
-                        Image(
-                            painter = painterResource(R.drawable.google), // Reemplaza con el recurso de tu imagen PNG de Google
-                            contentDescription = "Iniciar sesión con Google",
-                            modifier = Modifier
-                                .size(70.dp)
-                                .clickable {
-                                    // Lógica para inicio de sesión con Google
-                                }
-                        )
-
-                        // Botón de Facebook
-                        Image(
-                            painter = painterResource(R.drawable.facebook), // Reemplaza con el recurso de tu imagen PNG de Facebook
-                            contentDescription = "Iniciar sesión con Facebook",
-                            modifier = Modifier
-                                .size(70.dp)
-                                .clickable {
-                                    // Lógica para inicio de sesión con Facebook
-                                }
-                        )
-                    }
 
                 }
 

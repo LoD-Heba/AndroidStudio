@@ -39,12 +39,13 @@ class Login : ViewModel() {
         val httpClient = HttpCLient() //crear instancia
         return httpClient.makeHttpRequest(emailText,password) //corre el metodo makeHttpRequest
     }
+    ///////////////////
     fun procesarRespuesta(response: Response, context: Context, navController: NavHostController)
     {
         if(response.code == 200)
         {
             val body = response.body
-            navController.navigate("product_register")
+            navController.navigate("main")
         }
         if(response.code == 422)
         {
@@ -62,7 +63,7 @@ class Login : ViewModel() {
                 emailErrorState.value = false
             }
 
-
         }
     }
+///////////////////
 }

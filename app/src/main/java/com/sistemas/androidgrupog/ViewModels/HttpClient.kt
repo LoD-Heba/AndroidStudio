@@ -1,4 +1,5 @@
 package com.sistemas.androidgrupog.ViewModels
+
 import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
@@ -17,34 +18,43 @@ import okhttp3.logging.HttpLoggingInterceptor
 
 class HttpCLient  {
 //conexion con laravel userLogin
-    suspend fun makeHttpRequest(emailText:String, password:String): Response
-    {
+    ////////////////////////////////////////
+    suspend fun makeHttpRequest(emailText: String, password: String): Response {
         val client = OkHttpClient.Builder()
-            .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)).build();
-        val backendAddress = "192.168.1.2:8000"
-        val loginPath = "/api/userLogin"
-
-        val json = """
-            {
-                "email": "$emailText",
-                "password": "$password"
-            }
-        """.trimIndent()
-        //
-        val mediaType = "application/json; charset=utf-8".toMediaType()
-        val requestBody = json.toRequestBody(mediaType)
-        //
-        val request = Request.Builder()
-            .url("http://$backendAddress$loginPath")
-            .post(requestBody)
-            .addHeader("Accept","application/json")
+            .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
             .build()
-        return withContext(Dispatchers.IO){
+
+        val backendAddress = "http://192.168.1.2:8000"  // Definir la base URL correctamente
+        val loginPath = "/api/userLogin"  // Definir el path específico
+
+        // Preparar los datos del login en formato JSON
+        val json = """
+        {
+            "email": "$emailText",
+            "password": "$password"
+        }
+    """.trimIndent()
+
+        // Definir el tipo de contenido para la solicitud
+        val mediaType = "application/json; charset=utf-8".toMediaType()
+
+        // Crear el cuerpo de la solicitud POST
+        val requestBody = json.toRequestBody(mediaType)
+
+        // Crear la solicitud HTTP con la URL completa
+        val request = Request.Builder()
+            .url("$backendAddress$loginPath")  // Concatenar la URL base con el path
+            .post(requestBody)
+            .addHeader("Accept", "application/json")
+            .build()
+
+        // Ejecutar la solicitud de forma asíncrona usando withContext para no bloquear el hilo principal
+        return withContext(Dispatchers.IO) {
             client.newCall(request).execute()
         }
-
-
     }
+
+    //////////////////////////////////////////////////////////
     suspend fun setCategoriaHttpRequest(/*token: String?,*/ categoryName: String, imageUrl: Uri?,categoryId:String, context: Context): Response {
         val client = OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
@@ -100,6 +110,9 @@ class HttpCLient  {
         }
     }
 
+    //Fin Category
+
+    //
     suspend fun getProductsHttpRequest():Response
     {
         val client = OkHttpClient.Builder()
