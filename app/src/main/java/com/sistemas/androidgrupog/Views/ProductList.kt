@@ -1,5 +1,6 @@
 package com.sistemas.androidgrupog.Views
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,22 +20,28 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
-
+import androidx.compose.ui.res.painterResource
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.sistemas.androidgrupog.Navagation.MainDestination
+import com.sistemas.androidgrupog.R
 
 @Composable
 fun ProductList(
     products: List<Plant>,
-    onNavigateBack: () -> Unit,
-    onNavigateToDetail: (Plant) -> Unit
+    navController: NavHostController,
+    productCount: Int // Puedes pasar el conteo de productos aquí
 ) {
     Scaffold(
+        topBar = {
+            TopBar(productCount = productCount) // Agregamos el TopBar
+        },
         bottomBar = {
             BottomNavigationBar(
-                onHomeClick = { println("Navegar a Home") },
-                onSearchClick = { println("Navegar a lista de productos") },
-                onFavoritesClick = { println("Navegar a Favoritos") },
-                onProfileClick = { println("Navegar a Perfil") }
+                navController = navController
             )
         }
     ) { innerPadding ->
@@ -44,9 +51,7 @@ fun ProductList(
                 .background(Color(0xFFEAF5E2))
                 .padding(innerPadding) // Ajustar contenido para no superponer la barra
         ) {
-            TopBar(productCount = products.size)
-
-            // Nueva sección de filtros con íconos
+            // Nueva sección de filtros con imágenes
             FilterSection(
                 onFilterClick = { category ->
                     println("Filtrar por categoría: $category")
@@ -67,13 +72,15 @@ fun ProductList(
                     PlantCard(
                         plant = plant,
                         onAddToCart = { println("Agregado al carrito: ${plant.name}") },
-                        onVote = { println("Votado: ${plant.name}") }
+                        onVote = { println("Votado: ${plant.name}") },
+                        // onNavigateToDetail = { /* Aquí se puede manejar la navegación al detalle del producto */ }
                     )
                 }
             }
         }
     }
 }
+
 
 @Composable
 fun FilterSection(
@@ -85,31 +92,37 @@ fun FilterSection(
             .padding(10.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-
-        FilterIcon(icon = Icons.Filled.Home, label = "Árboles", onClick = { onFilterClick("Árboles") })
-        FilterIcon(icon = Icons.Filled.Favorite, label = "Flores", onClick = { onFilterClick("Flores") })
+        FilterImage(imageRes = R.drawable.arboles, label = "Árboles", onClick = { onFilterClick("Árboles") })
+        FilterImage(imageRes = R.drawable.flores, label = "Flores", onClick = { onFilterClick("Flores") })
+        FilterImage(imageRes = R.drawable.exterior, label = "Exterior", onClick = { onFilterClick("Exterior") })
+        FilterImage(imageRes = R.drawable.interior, label = "Interior", onClick = { onFilterClick("Interior") })
     }
 }
 
-
 @Composable
-fun FilterIcon(icon: ImageVector, label: String, onClick: () -> Unit) {
+fun FilterImage(
+    imageRes: Int,
+    label: String,
+    onClick: () -> Unit
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.clickable(onClick = onClick)
+        modifier = Modifier
+            .clickable(onClick = onClick)
+            .padding(8.dp)
     ) {
-        Icon(
-            imageVector = icon,
+        // Modificamos el color de la imagen usando el filtro 'ColorFilter'
+        Image(
+            painter = painterResource(id = imageRes),
             contentDescription = label,
             modifier = Modifier
-                .size(50.dp)
-                .padding(5.dp),
-            tint = Color(0xFF4CAF50)
+                .size(50.dp), // Ajusta el tamaño de las imágenes
+            colorFilter = ColorFilter.tint(Color(0xFF74C69D)) // Aplica el color verde
         )
         Text(
             text = label,
-            style = MaterialTheme.typography.labelSmall,
-            color = Color.Black
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.padding(top = 4.dp)
         )
     }
 }
@@ -119,7 +132,8 @@ fun FilterIcon(icon: ImageVector, label: String, onClick: () -> Unit) {
 fun ProductListScreenPreview() {
     ProductList(
         products = samplePlants(),
-        onNavigateBack = {},
-        onNavigateToDetail = {}
+        navController = rememberNavController(),
+        productCount = 5 // Valor de ejemplo para el conteo de productos en el carrito
     )
 }
+

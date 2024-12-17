@@ -35,10 +35,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.navigation.NavHostController
+import com.sistemas.androidgrupog.Navagation.MainDestination
 import com.sistemas.androidgrupog.R
 
 @Composable
-fun Index() {
+fun Index(navController: NavHostController) {
     val productCount = 4 // TODO: Obtener valor dinámico desde el backend usando OkHttp y Laravel
 
     Column(
@@ -46,22 +48,19 @@ fun Index() {
             .fillMaxSize()
             .background(Color(0xFFEAF5E2))
             .padding(top = 20.dp)
-
     ) {
         TopBar(productCount)
         SearchSection()
         FeaturedPlantsSection(samplePlants())
         NewPlantsSection(onViewAllClick = {})
+
+        // Pasar el NavController a BottomNavigationBar
         BottomNavigationBar(
-                onHomeClick = { println("Navegar a Home") },
-                onSearchClick = { println("Navegar a lista de productos") },
-                onFavoritesClick = { println("Navegar a Favoritos") },
-                onProfileClick = { println("Navegar a Perfil") }
+            navController = navController
         )
-
     }
-
 }
+
 
 
 // Data class para representar una planta
@@ -77,7 +76,16 @@ fun samplePlants(): List<Plant> {
     return listOf(
         Plant(1, "Aloe Vera", "25.99$", R.drawable.logoclub, 10),
         Plant(2, "Cactus", "15.50$", R.drawable.logoclub, 5),
-        Plant(3, "Orquídea", "30.00$", R.drawable.logoclub, 7)
+        Plant(3, "Orquídea", "30.00$", R.drawable.logoclub, 7),
+                Plant(4, "Aloe Vera", "25.99$", R.drawable.logoclub, 10),
+        Plant(4, "Aloe Vera", "25.99$", R.drawable.logoclub, 10),
+        Plant(4, "Aloe Vera", "25.99$", R.drawable.logoclub, 10),
+    Plant(6, "Cactus", "15.50$", R.drawable.logoclub, 5),
+    Plant(7, "Orquídea", "30.00$", R.drawable.logoclub, 7),
+    Plant(8, "Aloe Vera", "25.99$", R.drawable.logoclub, 10),
+    Plant(9, "Cactus", "15.50$", R.drawable.logoclub, 5),
+    Plant(10, "Orquídea", "30.00$", R.drawable.logoclub, 7)
+
     )
 
 }
@@ -337,17 +345,11 @@ fun NewPlantsSection(onViewAllClick: () -> Unit)
 }
 ////////////////////////////////////
 @Composable
-fun BottomNavigationBar(
-    onHomeClick: () -> Unit = {},
-    onSearchClick: () -> Unit = {},
-    onFavoritesClick: () -> Unit = {},
-    onProfileClick: () -> Unit = {}
-) {
+fun BottomNavigationBar(navController: NavHostController) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(1.dp),
-
         contentAlignment = Alignment.Center
     ) {
         Row(
@@ -358,7 +360,7 @@ fun BottomNavigationBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Botón Home
-            IconButton(onClick = onHomeClick) {
+            IconButton(onClick = { navController.navigate(MainDestination.INDEX) }) {
                 Icon(
                     painter = painterResource(id = R.drawable.house_solid),
                     contentDescription = "Home",
@@ -368,7 +370,7 @@ fun BottomNavigationBar(
             }
 
             // Botón Buscar
-            IconButton(onClick = onSearchClick) {
+            IconButton(onClick = { navController.navigate(MainDestination.PRODUCT_LIST) }) {
                 Icon(
                     painter = painterResource(id = R.drawable.store_solid),
                     contentDescription = "Store",
@@ -378,16 +380,17 @@ fun BottomNavigationBar(
             }
 
             // Botón Favoritos
-            IconButton(onClick = onFavoritesClick) {
+            IconButton(onClick = { navController.navigate(MainDestination.PRODUCT_REGISTER) }) {
                 Icon(
                     painter = painterResource(id = R.drawable.cart),
-                    contentDescription = "card",
+                    contentDescription = "Card",
                     tint = Color(0xFF74C69D),
                     modifier = Modifier.size(30.dp)
                 )
             }
+
             // Botón Perfil
-            IconButton(onClick = onProfileClick) {
+            IconButton(onClick = { navController.navigate(MainDestination.INDEX) }) {
                 Icon(
                     painter = painterResource(id = R.drawable.user_large_solid),
                     contentDescription = "Profile",
@@ -398,6 +401,7 @@ fun BottomNavigationBar(
         }
     }
 }
+
 
 
 

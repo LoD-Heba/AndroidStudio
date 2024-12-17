@@ -3,13 +3,18 @@ package com.sistemas.androidgrupog.Views
 import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text2.input.rememberTextFieldState
 import androidx.compose.foundation.text2.input.setTextAndPlaceCursorAtEnd
@@ -49,36 +54,94 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
+import com.sistemas.androidgrupog.R
 import com.sistemas.androidgrupog.ViewModels.ProductRegister
 import com.sistemas.ejemplo2.Views.ImagePicker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+
+@Composable
+fun TopBa(productCount: Int) {
+    // Estado para controlar la expansión del menú
+    var menuExpanded by remember { mutableStateOf(false) }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                top = 16.dp,
+                start = 10.dp,
+                end = 10.dp,
+                bottom = 5.dp
+            ),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Logo del club
+        Image(
+            painter = painterResource(id = R.drawable.logoclub),
+            contentDescription = "Logo",
+            modifier = Modifier.size(70.dp)
+        )
+
+        // Icono del carrito con contador de productos
+        Box(contentAlignment = Alignment.TopEnd) {
+            IconButton(onClick = { /* TODO: Navegación al carrito */ }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.cart),
+                    contentDescription = "Carrito",
+                    tint = Color(0xFF588157),
+                    modifier = Modifier.size(35.dp)
+                )
+            }
+
+            // Mostramos el contador solo si hay productos
+            if (productCount > 0) {
+                Box(
+                    modifier = Modifier
+                        .size(20.dp)
+                        .background(Color.Red, RoundedCornerShape(8.dp)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = productCount.toString(),
+                        color = Color.White,
+                        fontSize = 13.sp
+                    )
+                }
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun ProductRegister(navController: NavHostController,context:Context){
+fun ProductRegister(navController: NavHostController, context: Context) {
     val viewModel = viewModel<ProductRegister>()
     val coroutineScope = rememberCoroutineScope()
-    var productUrlImage = remember{viewModel.productUrlImage}
-    var nombre by remember { mutableStateOf("")}
-    //var nombreCategoria by remember { mutableStateOf("")}
+    var productUrlImage = remember { viewModel.productUrlImage }
+    var nombre by remember { mutableStateOf("") }
 
+    // Estado para manejar errores del nombre del producto
+    val nombreErrorState = remember { viewModel.nombreErrorState }
 
-
-    var nombreErrorState = remember{ viewModel.nombreErrorState}
-
-    var categoryList = remember { viewModel.categoryList }
-
-    val options: List<String> = listOf("Opción 1", "Opción 2", "Opción 3", "Opción 4", "Opción 5")
+    // Lista de categorías obtenidas del ViewModel
+    val categoryList = remember { viewModel.categoryList }
     var expanded by remember { mutableStateOf(false) }
-    val textFieldState = rememberTextFieldState(options[0])
+    var selectedCategoryId by remember { mutableStateOf(categoryList.firstOrNull()?.first) }
+    var nombreCategoria by remember { mutableStateOf(if (categoryList.isEmpty()) "" else categoryList.first().second) }
+
     LaunchedEffect(Unit) {
+        // Obtener categorías cuando se monta el componente
         viewModel.runGetCategory(coroutineScope) {
             val response = viewModel.runGetCategory()
             withContext(Dispatchers.Main) {
@@ -87,12 +150,10 @@ fun ProductRegister(navController: NavHostController,context:Context){
         }
     }
 
-    var selectedCategoryId by remember { mutableStateOf(categoryList.firstOrNull()?.first) }
-    var nombreCategoria by remember { mutableStateOf(if(categoryList.isEmpty()) "" else categoryList.first().second) }
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
-    ){
+    ) {
         ElevatedCard(
             colors = CardDefaults.cardColors(
                 containerColor = Color(0xFF00B8D4)
@@ -102,96 +163,95 @@ fun ProductRegister(navController: NavHostController,context:Context){
             ),
             modifier = Modifier
                 .fillMaxSize()
-                .padding(
-                    start = 40.dp,
-                    end= 40.dp,
-                    top = 40.dp,
-                    bottom = 40.dp
-                )
-                .size(width = 240.dp, height = 100.dp)
-        )
-        {
+                .padding(40.dp)
+        ) {
             Column(
                 modifier = Modifier
                     .padding(16.dp)
-                    .fillMaxWidth()
-                    .align(Alignment.CenterHorizontally)
-            )
-            {
-
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Selector de imagen del producto
                 ImagePicker(
                     onImageSelected = { uri ->
                         productUrlImage.value = uri
                     },
                     onImageRemoved = {
-                        // Haz algo cuando se elimina la imagen (si es necesario)
+                        // Acción opcional al eliminar una imagen
                     }
                 )
+
+                // Campo para ingresar el nombre del producto
                 OutlinedTextField(
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    value = nombre ,
+                    value = nombre,
                     onValueChange = { nombre = it },
                     label = { Text("Nombre Producto") },
-
-                    placeholder = { Text( "Ingrese el nombre")},
+                    placeholder = { Text("Ingrese el nombre") },
                     isError = nombreErrorState.value
                 )
+
+                // Menú desplegable para seleccionar la categoría
                 ExposedDropdownMenuBox(
                     expanded = expanded,
-                    onExpandedChange = { expanded = it },
+                    onExpandedChange = { expanded = it }
                 ) {
                     OutlinedTextField(
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                            .menuAnchor(),
                         value = nombreCategoria,
                         onValueChange = { nombreCategoria = it },
-                        label = { Text("Categoria") },
-
-                        placeholder = { Text( "Ingrese el nombre")},
+                        label = { Text("Categoría") },
+                        modifier = Modifier.menuAnchor(),
                         isError = nombreErrorState.value
                     )
                     ExposedDropdownMenu(
                         expanded = expanded,
-                        onDismissRequest = { expanded = false },
+                        onDismissRequest = { expanded = false }
                     ) {
-                        categoryList.forEach { (name, id) ->
+                        categoryList.forEach { (id, name) ->
                             DropdownMenuItem(
-                                text = { Text(name, style = MaterialTheme.typography.bodyLarge) },
+                                text = { Text(name) },
                                 onClick = {
-                                    nombreCategoria = name  // Actualizamos el nombre, no el id
-                                    selectedCategoryId = id  // Mantenemos el 'id' para la lógica
+                                    nombreCategoria = name
+                                    selectedCategoryId = id
                                     expanded = false
-                                },
-                                contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                                }
                             )
                         }
                     }
                 }
+
+                // Botón para ingresar el producto
                 Button(
-                    modifier = Modifier
-                        .padding(top = 16.dp)
-                        .align(Alignment.CenterHorizontally)
-                        .fillMaxWidth(),
                     onClick = {
                         viewModel.runSetCategoria(coroutineScope) {
-                            val response = viewModel.runHttpSetCategoria(nombre,productUrlImage.value,selectedCategoryId.toString(),context)
+                            val response = viewModel.runHttpSetCategoria(
+                                nombre,
+                                productUrlImage.value,
+                                selectedCategoryId.toString(),
+                                context
+                            )
                             withContext(Dispatchers.Main) {
-                                viewModel.procesarRespuesta(response,navController)
+                                viewModel.procesarRespuesta(response, navController)
                             }
                         }
-                    }) {
-                    Text(
-                        text = "Ingresar"
-                    )
+                    },
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .fillMaxWidth()
+                ) {
+                    Text(text = "Ingresar")
                 }
             }
         }
     }
 }
+
 @Preview(showBackground = true)
 @Composable
 fun ProductPreview() {
     val navController = rememberNavController()
     val context = LocalContext.current
-    ProductRegister(navController,context)
+    Column {
+        TopBa(productCount = 9) // Simulamos un contador de productos
+        ProductRegister(navController, context)
+    }
 }
