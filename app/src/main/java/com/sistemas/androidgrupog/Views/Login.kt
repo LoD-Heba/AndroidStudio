@@ -71,6 +71,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.sistemas.androidgrupog.Navagation.MainDestination
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -194,17 +195,22 @@ fun Login(navController:NavHostController) {
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
                         Button(onClick = {
-                            /* Lógica de inicio de sesión */
-                            viewModel.runLogin(coroutineScope){
-                                val response = viewModel.runHttpLogin(emailText,passwordText)
-                                withContext(Dispatchers.Main){
-                                    viewModel.procesarRespuesta(response, context, navController)
+                            // Ejecutar el proceso de login
+                            viewModel.runLogin(coroutineScope) {
+                                val response = viewModel.runHttpLogin(emailText, passwordText)
+                                withContext(Dispatchers.Main) {
+                                    viewModel.procesarRespuesta(response, context)
+                                    if (viewModel.loginSuccess.value) {
+                                        navController.navigate("index") // Navegar solo si el login fue exitoso
+                                    }
                                 }
                             }
                         }) {
-                            Text("Ingresar")
+                            Text("Iniciar sesión")
                         }
-                        OutlinedButton(onClick = { /* Lógica de registro */ }) {
+
+                    }
+                        Button(onClick = { navController.navigate(MainDestination.USER_REGISTER) }) {
                             Text("Registrarse")
                         }
                     }
@@ -214,7 +220,7 @@ fun Login(navController:NavHostController) {
 
             }
         }
-    }
+
 
 //}
 @Preview(showBackground = true)

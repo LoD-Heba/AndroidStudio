@@ -156,7 +156,7 @@ fun ProductRegister(navController: NavHostController, context: Context) {
     ) {
         ElevatedCard(
             colors = CardDefaults.cardColors(
-                containerColor = Color(0xFF00B8D4)
+                containerColor = Color(0xFF0F1010)
             ),
             elevation = CardDefaults.cardElevation(
                 defaultElevation = 6.dp

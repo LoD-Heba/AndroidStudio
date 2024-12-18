@@ -14,56 +14,56 @@ import org.json.JSONObject
 import java.net.ConnectException
 
 class Login : ViewModel() {
-    //mensajes de error
-    val emailErrorMessage = mutableStateOf("");
-    val passwordErrorMessage = mutableStateOf("");
-    val emailErrorState = mutableStateOf(false);
-    val passwordErrorState = mutableStateOf(false);
-    //
-    //metodos: coroutineScope, hilos o procesos en segundo plano--- asincron
-    fun runLogin(coroutineScope: CoroutineScope, task: suspend ()->Unit){
-        coroutineScope.launch {
-            try{
-                task.invoke()
-            } catch (e:ConnectException){
-            }
-            catch (e:IOException){}
-            catch (e:Exception){}
-        }
-    }
-    //
+    // Mensajes de error
+    val emailErrorMessage = mutableStateOf("")
+    val passwordErrorMessage = mutableStateOf("")
+    val emailErrorState = mutableStateOf(false)
+    val passwordErrorState = mutableStateOf(false)
 
-    //suspend: metodo que es ejecutado solo si existe un segundo plano
-    //recive parametros: emailText y password
-    suspend fun runHttpLogin(emailText:String,password:String): Response {
-        val httpClient = HttpCLient() //crear instancia
-        return httpClient.makeHttpRequest(emailText,password) //corre el metodo makeHttpRequest
-    }
-    ///////////////////
-    fun procesarRespuesta(response: Response, context: Context, navController: NavHostController)
-    {
-        if(response.code == 200)
-        {
-            val body = response.body
-            navController.navigate("main")
+    // Estado del login
+    val loginSuccess = mutableStateOf(false)
+
+    // Métodos: coroutineScope, hilos o procesos en segundo plano--- asincrónicos
+    fun runLogin(coroutineScope: CoroutineScope, task: suspend () -> Unit) {
+        coroutineScope.launch {
+            try {
+                task.invoke()
+            } catch (e: ConnectException) {
+                // Manejar error de conexión
+            } catch (e: IOException) {
+                // Manejar error de IO
+            } catch (e: Exception) {
+                // Manejar otros errores
+            }
         }
-        if(response.code == 422)
-        {
+    }
+
+    // Suspend: método que se ejecuta solo en segundo plano
+    suspend fun runHttpLogin(emailText: String, password: String): Response {
+        val httpClient = HttpCLient() // Crear instancia
+        return httpClient.makeHttpRequest(emailText, password) // Ejecutar la solicitud
+    }
+
+    ///////////////////
+    fun procesarRespuesta(response: Response, context: Context) {
+        if (response.code == 200) {
+            loginSuccess.value = true // Login exitoso
+        } else if (response.code == 422) {
+            loginSuccess.value = false // Fallo en el login
             val body = response.body
             val stringResponse = body?.string() ?: ""
             val jsonResponse = JSONObject(stringResponse)
             val jsonArrayBody = jsonResponse.getJSONArray("body")
             val jsonErrors = jsonArrayBody.getJSONObject(0)
-            if(jsonErrors.has("email"))
-            {
-                emailErrorState.value=true
-                emailErrorMessage.value= jsonErrors.getJSONArray("email")[0].toString()
-            }
-            else{
+            if (jsonErrors.has("email")) {
+                emailErrorState.value = true
+                emailErrorMessage.value = jsonErrors.getJSONArray("email")[0].toString()
+            } else {
                 emailErrorState.value = false
             }
-
+        } else {
+            loginSuccess.value = false // Otros errores
         }
     }
-///////////////////
+    ///////////////////
 }

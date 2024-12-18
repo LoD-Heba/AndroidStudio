@@ -96,4 +96,4 @@ class ProductRegister : ViewModel() {
         }
 
     }
-}
+}class UserRegister

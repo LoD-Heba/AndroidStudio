@@ -8,8 +8,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.sistemas.androidgrupog.ViewModels.ProductList
-import com.sistemas.androidgrupog.Views.Login
+
 import com.sistemas.androidgrupog.Views.Index
+import com.sistemas.androidgrupog.Views.Login
+import com.sistemas.androidgrupog.Views.RegisterScreen
 import com.sistemas.androidgrupog.Views.ProductList
 import com.sistemas.androidgrupog.Views.ProductRegister
 import com.sistemas.androidgrupog.Views.samplePlants
@@ -19,14 +21,18 @@ object MainDestination {
     const val INDEX = "index"
     const val PRODUCT_REGISTER = "product_register"
     const val PRODUCT_LIST = "product_list"
+    const val USER_REGISTER = "user_register"
 }
 
 @Composable
 fun AppNavigation(navController: NavHostController, activity: ComponentActivity) {
     // Destino principal de la app
-    NavHost(navController, startDestination = MainDestination.INDEX) {
+    NavHost(navController, startDestination = MainDestination.LOGIN) {
         composable(MainDestination.LOGIN) {
             Login(navController)
+        }
+        composable(MainDestination.USER_REGISTER) {
+            RegisterScreen<Any>()
         }
 
         composable(MainDestination.INDEX) {
